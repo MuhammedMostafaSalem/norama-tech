@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Raw values are populated from the platform settings API at runtime. */
+  --theme-light-primary: #2563EB;
+  --theme-light-secondary: #14B8A6;
+  --theme-light-accent: #F59E0B;
+  --theme-light-background: #FFFFFF;
+  --theme-light-surface: #F8FAFC;
+  --theme-light-text: #0F172A;
+  --theme-light-mutedText: #64748B;
+  --theme-light-border: #E2E8F0;
+  --theme-light-success: #22C55E;
+  --theme-light-warning: #EAB308;
+  --theme-light-danger: #EF4444;
+
+  --theme-dark-primary: #3B82F6;
+  --theme-dark-secondary: #2DD4BF;
+  --theme-dark-accent: #FBBF24;
+  --theme-dark-background: #020617;
+  --theme-dark-surface: #0F172A;
+  --theme-dark-text: #F8FAFC;
+  --theme-dark-mutedText: #94A3B8;
+  --theme-dark-border: #334155;
+  --theme-dark-success: #22C55E;
+  --theme-dark-warning: #FACC15;
+  --theme-dark-danger: #F87171;
+}
+
+/* Dark is the default and remains the fallback before the provider mounts. */
+:root,
+html[data-theme="dark"] {
+  --color-primary: var(--theme-dark-primary);
+  --color-secondary: var(--theme-dark-secondary);
+  --color-accent: var(--theme-dark-accent);
+  --color-background: var(--theme-dark-background);
+  --color-background-alt: var(--theme-dark-surface);
+  --color-surface: var(--theme-dark-surface);
+  --color-card: var(--theme-dark-surface);
+  --color-card-hover: color-mix(in srgb, var(--theme-dark-surface) 94%, var(--theme-dark-text));
+  --color-text-primary: var(--theme-dark-text);
+  --color-text-secondary: var(--theme-dark-mutedText);
+  --color-text-muted: color-mix(in srgb, var(--theme-dark-mutedText) 78%, var(--theme-dark-background));
+  --color-border: var(--theme-dark-border);
+  --color-success: var(--theme-dark-success);
+  --color-warning: var(--theme-dark-warning);
+  --color-error: var(--theme-dark-danger);
+  --color-danger: var(--theme-dark-danger);
+  --color-primary-hover: color-mix(in srgb, var(--theme-dark-primary) 86%, var(--theme-dark-text));
+  --color-glow-blue: var(--theme-dark-primary);
+  --color-glow-purple: var(--theme-dark-secondary);
+  --color-glow-cyan: var(--theme-dark-accent);
+}
+
+html[data-theme="light"] {
+  --color-primary: var(--theme-light-primary);
+  --color-secondary: var(--theme-light-secondary);
+  --color-accent: var(--theme-light-accent);
+  --color-background: var(--theme-light-background);
+  --color-background-alt: var(--theme-light-surface);
+  --color-surface: var(--theme-light-surface);
+  --color-card: var(--theme-light-surface);
+  --color-card-hover: color-mix(in srgb, var(--theme-light-surface) 94%, var(--theme-light-text));
+  --color-text-primary: var(--theme-light-text);
+  --color-text-secondary: var(--theme-light-mutedText);
+  --color-text-muted: color-mix(in srgb, var(--theme-light-mutedText) 78%, var(--theme-light-background));
+  --color-border: var(--theme-light-border);
+  --color-success: var(--theme-light-success);
+  --color-warning: var(--theme-light-warning);
+  --color-error: var(--theme-light-danger);
+  --color-danger: var(--theme-light-danger);
+  --color-primary-hover: color-mix(in srgb, var(--theme-light-primary) 86%, var(--theme-light-text));
+  --color-glow-blue: var(--theme-light-primary);
+  --color-glow-purple: var(--theme-light-secondary);
+  --color-glow-cyan: var(--theme-light-accent);
+}
+
+html {
+  background: var(--color-background);
+}
+
+body {
+  font-family: var(--font-cairo);
+  background: var(--color-background-alt);
+  color: var(--color-text-primary);
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+* {
+  scrollbar-color: rgba(105, 210, 255, 0.35) transparent;
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(105, 210, 255, 0.28);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(105, 210, 255, 0.52);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  transition: all .3s ease;
+}
+
+img {
+  user-select: none;
+}
+
+/* Gradient Utilities */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+}
+
+.gradient-card {
+  background: linear-gradient(180deg,
+      var(--color-card),
+      var(--color-background-alt));
+}
+
+.gradient-button {
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+}
+
+.gradient-border {
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--color-secondary) 60%, transparent),
+      color-mix(in srgb, var(--color-primary) 60%, transparent));
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glass Effect */
+.glass {
+  background: color-mix(in srgb, var(--color-card) 75%, transparent);
+  /* backdrop-filter: blur(20px); */
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+}
+
+/* Shared hero background that follows the active theme instead of baking in
+   the original dark-only surface. */
+.theme-hero-background {
+  background: radial-gradient(
+    circle at top,
+    color-mix(in srgb, var(--color-primary) 10%, transparent),
+    var(--color-background) 65%
+  );
+}
+
+/* Glow Classes */
+.glow-purple {
+  box-shadow: 0 0 35px color-mix(in srgb, var(--color-glow-purple) 45%, transparent);
+}
+
+.glow-blue {
+  box-shadow: 0 0 35px color-mix(in srgb, var(--color-glow-blue) 35%, transparent);
+}
+
+.glow {
+  box-shadow:
+    0 0 15px color-mix(in srgb, var(--color-glow-purple) 25%, transparent),
+    0 0 45px color-mix(in srgb, var(--color-glow-blue) 15%, transparent);
+}
+
+
+/* Utility */
+.section-title {
+  @apply text-4xl lg:text-5xl font-bold text-text-primary;
+}
+
+.section-subtitle {
+  @apply text-text-secondary text-lg leading-8;
+}
+
+
+.btn-primary {
+  @apply px-6 py-3 rounded-button text-white gradient-button  duration-300;
+}
+
+.btn-outline {
+  @apply border border-border bg-card hover:bg-card-hover rounded-button px-6 py-3 duration-300;
+}
+
+
+.input-style {
+  @apply w-full rounded-2xl border border-border bg-background px-4 py-3 outline-none transition focus:border-primary;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
