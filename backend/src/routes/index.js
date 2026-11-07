@@ -1,7 +1,13 @@
 const express = require("express");
 const { StatusCodes } = require("http-status-codes");
 
+const authRoutes = require("./auth.routes");
+const userRoutes = require("./user.routes");
+
 const router = express.Router();
+
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
 
 router.get("/health", (req, res) => {
     res.status(StatusCodes.OK).json({ status: "ok" });
