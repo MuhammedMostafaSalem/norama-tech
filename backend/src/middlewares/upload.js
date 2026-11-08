@@ -1,3 +1,4 @@
+// Module: Configures image upload storage, size limits, and accepted MIME types.
 const path = require("path");
 const mime = require("mime-types");
 const multer = require("multer");

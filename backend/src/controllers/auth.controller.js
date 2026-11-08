@@ -1,6 +1,8 @@
+// Module: Handles account registration, OTP verification, login, sessions, and password recovery.
 const { createHash, randomBytes } = require("node:crypto");
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/user.model");
+const Settings = require("../models/settings.model");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../middlewares/catchAsync");
 const otpService = require("../services/otp.service");
@@ -10,7 +12,14 @@ const sendToken = require("../utils/sendToken");
 const env = require("../config/env");
 const verifyEmailTemplate = require("../templates/verifyEmailTemplate");
 
+// Signup logic: honor the site registration setting, create the account, and email its verification code.
 const signup = catchAsync(async (req, res) => {
+    const settings = await Settings.findOne({ siteKey: "global" }).select("allowRegistration");
+
+    if (settings?.allowRegistration === false) {
+        throw new ApiError("Account registration is currently disabled.", StatusCodes.FORBIDDEN);
+    }
+
     const { firstName, lastName, email, phone, password } = req.validatedBody;
     const existingUser = await User.findOne({
         $or: [{ email }, { phone }],
@@ -30,9 +39,11 @@ const signup = catchAsync(async (req, res) => {
     try {
         await sendEmail({
             email: newUser.email,
-            subject: "Verify your Norama Tech email",
-            message: `Your verification code is ${otp}. It expires in 10 minutes.`,
-            html: verifyEmailTemplate(`${newUser.firstName} ${newUser.lastName}`, otp),
+            subject: req.language === "ar" ? "تأكيد بريد Norama Tech" : "Verify your Norama Tech email",
+            message: req.language === "ar"
+                ? `رمز تأكيد البريد الإلكتروني هو ${otp}. تنتهي صلاحيته خلال 10 دقائق.`
+                : `Your verification code is ${otp}. It expires in 10 minutes.`,
+            html: verifyEmailTemplate(`${newUser.firstName} ${newUser.lastName}`, otp, req.language),
         });
     } catch (error) {
         await User.deleteOne({ _id: newUser._id, isVerified: false });
@@ -45,9 +56,10 @@ const signup = catchAsync(async (req, res) => {
     });
 });
 
+// Verify an email or password-reset OTP, then finish verification or issue a short-lived reset token.
 const verifyAccountOtp = catchAsync(async (req, res) => {
     const { email, otp, purpose } = req.validatedBody;
-    const user = await otpService.verifyOtp(email, otp, purpose);
+    const user = await otpService.verifyOtp(email, otp, purpose, req.language);
 
     if (purpose === "email_verification") {
         return sendToken(user, StatusCodes.OK, res, {
@@ -67,9 +79,10 @@ const verifyAccountOtp = catchAsync(async (req, res) => {
     });
 });
 
+// Resend a purpose-specific OTP while preserving the service's cooldown and attempt limits.
 const resendAccountOtp = catchAsync(async (req, res) => {
     const { email, purpose } = req.validatedBody;
-    await otpService.resendOtp(email, purpose);
+    await otpService.resendOtp(email, purpose, req.language);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -77,6 +90,7 @@ const resendAccountOtp = catchAsync(async (req, res) => {
     });
 });
 
+// Login logic: verify credentials and account state, then issue access and refresh tokens.
 const login = catchAsync(async (req, res) => {
     const { email, password } = req.validatedBody;
     const user = await User.findOne({ email }).select("+password +refreshTokens");
@@ -96,6 +110,7 @@ const login = catchAsync(async (req, res) => {
     return sendToken(user, StatusCodes.OK, res, { message: "Signed in successfully." });
 });
 
+// Rotate the submitted refresh token and return a new access token and refresh cookie.
 const refreshToken = catchAsync(async (req, res) => {
     const refreshToken =
         req.cookies?.[env.refreshTokenCookieName] || req.body?.refreshToken;
@@ -113,8 +128,9 @@ const refreshToken = catchAsync(async (req, res) => {
     });
 });
 
+// Start password recovery without revealing whether an email belongs to an account.
 const forgotPassword = catchAsync(async (req, res) => {
-    await otpService.resendOtp(req.validatedBody.email, "forgot_password");
+    await otpService.resendOtp(req.validatedBody.email, "forgot_password", req.language);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -122,6 +138,7 @@ const forgotPassword = catchAsync(async (req, res) => {
     });
 });
 
+// Validate the one-time reset token, save the new password, and revoke existing sessions.
 const resetPassword = catchAsync(async (req, res) => {
     const { token, password } = req.validatedBody;
     const hashedToken = createHash("sha256").update(token).digest("hex");
@@ -151,6 +168,7 @@ const resetPassword = catchAsync(async (req, res) => {
     });
 });
 
+// Revoke the current refresh token and clear its browser cookie.
 const logout = catchAsync(async (req, res) => {
     const refreshToken =
         req.cookies?.[env.refreshTokenCookieName] || req.body?.refreshToken;
@@ -167,6 +185,7 @@ const logout = catchAsync(async (req, res) => {
     });
 });
 
+// Return only the safe profile fields for the authenticated account.
 const currentUser = catchAsync(async (req, res) => {
     const user = req.user;
 

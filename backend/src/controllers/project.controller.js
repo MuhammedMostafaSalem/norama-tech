@@ -1,3 +1,4 @@
+// Module: Handles project reads and admin CRUD, including uploaded image lifecycle.
 const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 const Project = require("../models/project.model");
@@ -40,10 +41,12 @@ function uploadedFiles(files = {}) {
     return Object.values(files).flat();
 }
 
+// Remove newly uploaded files when validation or database persistence fails.
 async function cleanupUploadedFiles(files) {
     await Promise.allSettled(uploadedFiles(files).map((file) => deleteFile(uploadPath(file))));
 }
 
+// Projects can only reference categories that are currently available to visitors.
 async function requireActiveCategory(categoryId) {
     const category = await Category.findOne({ _id: categoryId, isActive: true }).select("_id");
 
@@ -52,6 +55,7 @@ async function requireActiveCategory(categoryId) {
     }
 }
 
+// Validate the category and attach uploaded file paths before creating the record.
 exports.createProject = createOne(Project, {
     modelName: "project",
     beforeCreate: async ({ req, data }) => {
@@ -87,6 +91,7 @@ exports.getAllProjectsByAdmin = getAll(Project, {
     populate: categorySummary,
 });
 
+// Public detail reads accept an ID or slug and hide drafts and inactive categories.
 exports.getProject = catchAsync(async (req, res) => {
     const identifier = req.params.id;
     const filter = mongoose.isValidObjectId(identifier)
@@ -110,6 +115,7 @@ exports.getProjectByAdmin = getOne(Project, {
     populate: categorySummary,
 });
 
+// Replace uploaded images only after a successful update, then remove superseded files.
 exports.updateProject = updateOne(Project, {
     modelName: "project",
     allowedFields: projectFields.split(" ").concat("clearGallery"),
@@ -148,6 +154,7 @@ exports.updateProject = updateOne(Project, {
     onError: ({ req }) => cleanupUploadedFiles(req.files),
 });
 
+// Delete the project record and its local cover and gallery files.
 exports.deleteProject = deleteOne(Project, {
     modelName: "project",
     afterDelete: async ({ document }) => {

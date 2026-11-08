@@ -1,3 +1,4 @@
+// Module: Handles review submission, ownership checks, public reads, and admin moderation.
 const { StatusCodes } = require("http-status-codes");
 const Review = require("../models/review.model");
 const Project = require("../models/project.model");
@@ -19,6 +20,7 @@ async function ensurePublishedProject(projectId) {
     }
 }
 
+// Create a pending review for the signed-in user and a published project.
 exports.createReview = createOne(Review, {
     modelName: "review",
     beforeCreate: async ({ req, data }) => {
@@ -120,6 +122,7 @@ exports.updateReview = updateOne(Review, {
     },
 });
 
+// Allow admins to approve or reject a review through the moderation endpoint.
 exports.moderateReview = updateOne(Review, {
     modelName: "review",
     allowedFields: ["status"],

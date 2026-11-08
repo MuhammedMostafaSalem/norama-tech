@@ -1,3 +1,4 @@
+// Module: Connects Mongoose to the configured MongoDB database.
 const mongoose = require("mongoose");
 const mongooseSequence = require("mongoose-sequence");
 require("colors");

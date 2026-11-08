@@ -1,3 +1,4 @@
+// Module: Validates the different strict content shapes for each website page.
 const { z } = require("zod");
 
 const text = (max = 500) => z.string().trim().min(1).max(max);

@@ -1,6 +1,8 @@
+// Module: Normalizes known errors and returns localized API error responses.
 const { StatusCodes } = require("http-status-codes");
 const ApiError = require("../utils/ApiError");
 const env = require("../config/env");
+const { translateMessage, translateValidationIssue } = require("../utils/translateMessage");
 
 function errorMiddleware(error, req, res, next) {
     if (res.headersSent) {
@@ -10,6 +12,14 @@ function errorMiddleware(error, req, res, next) {
     let statusCode = error.statusCode || error.status || StatusCodes.INTERNAL_SERVER_ERROR;
     let message = error.message || "Internal Server Error";
     let errors;
+
+    if (error.type === "entity.too.large") {
+        statusCode = StatusCodes.REQUEST_TOO_LONG;
+        message = "Request body is too large.";
+    } else if (error instanceof SyntaxError && Object.hasOwn(error, "body")) {
+        statusCode = StatusCodes.BAD_REQUEST;
+        message = "Request contains invalid JSON.";
+    }
 
     if (error.code === 11000) {
         statusCode = StatusCodes.CONFLICT;
@@ -39,9 +49,9 @@ function errorMiddleware(error, req, res, next) {
         statusCode = StatusCodes.BAD_REQUEST;
         errors = error.issues.map((issue) => ({
             path: issue.path.join("."),
-            message: issue.message,
+            message: translateValidationIssue(issue, req.language),
         }));
-        message = errors.map((issue) => issue.message).join(", ");
+        message = "Request data is invalid.";
 
         error = new ApiError(message, statusCode);
     }
@@ -64,7 +74,11 @@ function errorMiddleware(error, req, res, next) {
         statusCode = error.code === "LIMIT_FILE_SIZE"
             ? StatusCodes.REQUEST_TOO_LONG
             : StatusCodes.BAD_REQUEST;
-        message = error.message;
+        message = error.code === "LIMIT_FILE_SIZE"
+            ? "Uploaded file exceeds the allowed size."
+            : error.code === "LIMIT_UNEXPECTED_FILE"
+                ? "Unexpected file field."
+                : "Unable to process uploaded file.";
         errors = error.field ? { field: error.field, code: error.code } : { code: error.code };
 
         error = new ApiError(message, statusCode);
@@ -73,7 +87,12 @@ function errorMiddleware(error, req, res, next) {
     const response = {
         success: false,
         statusCode,
-        message,
+        message: translateMessage(
+            env.nodeEnv === "production" && statusCode >= StatusCodes.INTERNAL_SERVER_ERROR
+                ? "Internal Server Error"
+                : message,
+            req.language,
+        ),
     };
 
     if (errors !== undefined) {

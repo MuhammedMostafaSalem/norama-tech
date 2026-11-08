@@ -1,3 +1,4 @@
+// Module: Validates credentials, password rules, OTP actions, and password reset payloads.
 const { z } = require("zod");
 
 const emailSchema = z.string().trim().email().transform((value) => value.toLowerCase());

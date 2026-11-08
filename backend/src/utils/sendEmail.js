@@ -1,3 +1,4 @@
+// Module: Sends plain-text and HTML email through the configured SMTP transport.
 const { createMailer } = require("../config/mailer");
 
 async function sendEmail({ email, subject, message, html }) {

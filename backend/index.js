@@ -1,7 +1,9 @@
+// Module: Starts the HTTP server, connects to MongoDB, and handles process shutdown and fatal errors.
 const http = require("http");
 require("colors");
 
 const env = require("./src/config/env");
+require("./src/config/validateEnvironment")();
 const app = require("./app");
 const { connectDatabase: connectDB } = require("./src/config/database");
 

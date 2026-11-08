@@ -1,3 +1,4 @@
+// Module: Generates, verifies, and resends purpose-bound one-time passcodes.
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/user.model");
 const ApiError = require("../utils/ApiError");
@@ -8,6 +9,7 @@ const forgotPasswordTemplate = require("../templates/forgotPasswordTemplate");
 const MAX_ATTEMPTS = 5;
 const OTP_PURPOSES = ["email_verification", "forgot_password"];
 
+// Check the OTP purpose, expiry, attempt budget, and bcrypt hash before accepting a code.
 async function verifyOtp(email, otp, purpose = "email_verification") {
     if (!OTP_PURPOSES.includes(purpose)) {
         throw new ApiError("Invalid verification purpose.", StatusCodes.BAD_REQUEST);
@@ -74,7 +76,8 @@ async function verifyOtp(email, otp, purpose = "email_verification") {
     return user;
 }
 
-async function resendOtp(email, purpose = "email_verification") {
+// Enforce the resend cooldown, generate a fresh code, and send the matching email template.
+async function resendOtp(email, purpose = "email_verification", language = "en") {
     if (!OTP_PURPOSES.includes(purpose)) {
         throw new ApiError("Invalid verification purpose.", StatusCodes.BAD_REQUEST);
     }
@@ -112,14 +115,18 @@ async function resendOtp(email, purpose = "email_verification") {
     await sendEmail({
         email: user.email,
         subject: isPasswordReset
-            ? "Reset your Norama Tech password"
-            : "Verify your Norama Tech email",
+            ? language === "ar" ? "إعادة تعيين كلمة مرور Norama Tech" : "Reset your Norama Tech password"
+            : language === "ar" ? "تأكيد بريد Norama Tech" : "Verify your Norama Tech email",
         message: isPasswordReset
-            ? `Your password reset code is ${otp}. It expires in 10 minutes.`
-            : `Your email verification code is ${otp}. It expires in 10 minutes.`,
+            ? language === "ar"
+                ? `رمز إعادة تعيين كلمة المرور هو ${otp}. تنتهي صلاحيته خلال 10 دقائق.`
+                : `Your password reset code is ${otp}. It expires in 10 minutes.`
+            : language === "ar"
+                ? `رمز تأكيد البريد الإلكتروني هو ${otp}. تنتهي صلاحيته خلال 10 دقائق.`
+                : `Your email verification code is ${otp}. It expires in 10 minutes.`,
         html: isPasswordReset
-            ? forgotPasswordTemplate(username, otp)
-            : verifyEmailTemplate(username, otp),
+            ? forgotPasswordTemplate(username, otp, language)
+            : verifyEmailTemplate(username, otp, language),
     });
 
     return true;

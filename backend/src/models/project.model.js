@@ -1,3 +1,4 @@
+// Module: Defines project data, publication state, and automatic slug generation.
 const mongoose = require("mongoose");
 const { createSlug } = require("../utils/identity");
 

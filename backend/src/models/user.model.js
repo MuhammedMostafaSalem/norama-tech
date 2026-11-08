@@ -1,3 +1,4 @@
+// Module: Defines account security fields and password, OTP, slug, and access-token behavior.
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -130,8 +131,8 @@ userSchema.methods.compareOtp = function (candidateOtp) {
 };
 
 userSchema.methods.generateJWTToken = function () {
-    return jwt.sign({ id: this._id, tokenType: "access" }, env.jwtSecretToken, {
-        expiresIn: env.jwtExpiresInToken,
+    return jwt.sign({ id: this._id, tokenType: "access" }, env.jwtAccessSecret, {
+        expiresIn: env.jwtAccessExpiresIn,
     });
 };
 

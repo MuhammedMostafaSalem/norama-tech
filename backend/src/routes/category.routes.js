@@ -1,3 +1,4 @@
+// Module: Mounts public category reads and admin-only category mutations.
 const express = require("express");
 const categoryController = require("../controllers/category.controller");
 const { authorizeRoles, isAuthenticatedUser } = require("../middlewares/auth");

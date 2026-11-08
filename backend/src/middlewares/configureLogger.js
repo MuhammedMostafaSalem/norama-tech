@@ -1,3 +1,4 @@
+// Module: Adds request logging with a production-safe log format.
 const morgan = require("morgan");
 const env = require("../config/env");
 

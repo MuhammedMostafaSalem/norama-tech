@@ -1,3 +1,4 @@
+// Module: Validates and serves published page content and provides admin content CRUD.
 const { StatusCodes } = require("http-status-codes");
 const WebsiteContent = require("../models/websiteContent.model");
 const ApiError = require("../utils/ApiError");
@@ -33,6 +34,7 @@ exports.getWebsiteContent = getOne(WebsiteContent, {
     select: "page content isPublished updatedAt",
 });
 
+// Return content only when the requested page exists and is published.
 exports.getPublishedPage = async (req, res, next) => {
     const pageSchema = pageContentSchemas[req.params.page];
 
@@ -63,6 +65,7 @@ exports.getPublishedPage = async (req, res, next) => {
     }
 };
 
+// Re-validate edited page content against the schema for that specific page type.
 exports.updateWebsiteContent = updateOne(WebsiteContent, {
     modelName: "websiteContent",
     allowedFields: ["content", "isPublished"],

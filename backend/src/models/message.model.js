@@ -1,3 +1,4 @@
+// Module: Defines persisted contact message and notification status fields.
 const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema(

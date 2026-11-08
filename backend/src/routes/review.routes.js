@@ -1,3 +1,4 @@
+// Module: Mounts public review reads, signed-in user actions, and admin moderation routes.
 const express = require("express");
 const reviewController = require("../controllers/review.controller");
 const { authorizeRoles, isAuthenticatedUser } = require("../middlewares/auth");

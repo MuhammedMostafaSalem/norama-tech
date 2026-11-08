@@ -1,3 +1,4 @@
+// Module: Converts unmatched routes into a standard API not-found error.
 const { StatusCodes } = require("http-status-codes");
 const ApiError = require("../utils/ApiError");
 

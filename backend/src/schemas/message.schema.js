@@ -1,3 +1,4 @@
+// Module: Validates contact submissions, status changes, and admin list queries.
 const { z } = require("zod");
 
 const emailSchema = z.string().trim().email().transform((value) => value.toLowerCase());

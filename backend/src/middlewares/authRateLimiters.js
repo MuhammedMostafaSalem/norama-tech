@@ -1,9 +1,16 @@
+// Module: Applies separate request limits to signup, login, and OTP actions.
 const { rateLimit } = require("express-rate-limit");
 
 const commonOptions = {
     standardHeaders: "draft-8",
     legacyHeaders: false,
-    message: { success: false, message: "Too many requests. Please try again later." },
+    handler(req, res, next, options) {
+        return res.status(options.statusCode).json({
+            success: false,
+            statusCode: options.statusCode,
+            message: req.t("Too many requests. Please try again later."),
+        });
+    },
 };
 
 const signupLimiter = rateLimit({

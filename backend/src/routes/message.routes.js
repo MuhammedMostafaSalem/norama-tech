@@ -1,3 +1,4 @@
+// Module: Mounts the rate-limited public contact endpoint and admin message operations.
 const express = require("express");
 const messageController = require("../controllers/message.controller");
 const { authorizeRoles, isAuthenticatedUser } = require("../middlewares/auth");

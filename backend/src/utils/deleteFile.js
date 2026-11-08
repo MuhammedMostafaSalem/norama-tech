@@ -1,3 +1,4 @@
+// Module: Deletes an uploaded file only when its resolved path stays inside uploads.
 const path = require("path");
 const { unlink } = require("node:fs/promises");
 

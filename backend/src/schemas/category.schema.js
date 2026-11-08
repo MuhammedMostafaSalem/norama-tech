@@ -1,3 +1,4 @@
+// Module: Validates category mutations and category list query parameters.
 const { z } = require("zod");
 
 const createCategorySchema = z.object({

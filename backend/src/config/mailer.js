@@ -1,3 +1,4 @@
+// Module: Creates the SMTP transport used to deliver application emails.
 const nodemailer = require("nodemailer");
 
 function createMailer() {

@@ -1,3 +1,4 @@
+// Module: Validates profile edits, password changes, and admin user filters.
 const { z } = require("zod");
 
 const passwordSchema = z

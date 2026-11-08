@@ -1,3 +1,4 @@
+// Module: Builds the HTML notification sent to the site contact inbox.
 const escapeHtml = require("../utils/escapeHtml");
 
 function contactNotificationTemplate({ fullName, email, phone, subject, message }) {

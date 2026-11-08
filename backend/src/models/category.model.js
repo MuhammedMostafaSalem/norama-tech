@@ -1,3 +1,4 @@
+// Module: Defines category fields, slug generation, and the related-project virtual.
 const mongoose = require("mongoose");
 const { createSlug } = require("../utils/identity");
 

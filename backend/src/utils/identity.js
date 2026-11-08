@@ -1,3 +1,4 @@
+// Module: Creates normalized slugs and identifiers used by data records.
 const slugify = require("slugify");
 const { v4: uuidv4 } = require("uuid");
 

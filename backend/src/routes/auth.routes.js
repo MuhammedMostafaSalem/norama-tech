@@ -1,3 +1,4 @@
+// Module: Mounts public and authenticated account, OTP, session, and recovery endpoints.
 const express = require("express");
 const authController = require("../controllers/auth.controller");
 const { isAuthenticatedUser } = require("../middlewares/auth");

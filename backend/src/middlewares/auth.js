@@ -1,3 +1,4 @@
+// Module: Verifies access tokens and checks authenticated users' roles.
 const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
 const env = require("../config/env");
@@ -12,7 +13,7 @@ async function isAuthenticatedUser(req, res, next) {
         throw new ApiError("Access token is required.", StatusCodes.UNAUTHORIZED);
     }
 
-    const payload = jwt.verify(token, env.jwtSecretToken);
+    const payload = jwt.verify(token, env.jwtAccessSecret);
 
     if (payload.tokenType !== "access" || !payload.id) {
         throw new ApiError("Invalid access token.", StatusCodes.UNAUTHORIZED);

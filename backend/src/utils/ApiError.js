@@ -1,3 +1,4 @@
+// Module: Provides an HTTP-aware error type for expected API failures.
 const { StatusCodes } = require("http-status-codes");
 
 class ApiError extends Error {

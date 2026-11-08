@@ -1,3 +1,4 @@
+// Module: Issues an access token, rotates refresh sessions, and sets the refresh cookie.
 const ms = require("ms");
 const tokenService = require("../services/token.service");
 const env = require("../config/env");
@@ -41,7 +42,7 @@ async function sendToken(user, statusCode, res, options = {}) {
         data: {
             user: toPublicUser(user),
             accessToken: user.generateJWTToken(),
-            sessionExpiresAt: Date.now() + (ms(env.jwtExpiresInToken) || 15 * 60 * 1000),
+            sessionExpiresAt: Date.now() + (ms(env.jwtAccessExpiresIn) || 15 * 60 * 1000),
         },
     });
 }

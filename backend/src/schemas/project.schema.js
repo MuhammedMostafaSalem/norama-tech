@@ -1,3 +1,4 @@
+// Module: Validates project fields, image-related form values, and project queries.
 const { z } = require("zod");
 
 const objectIdSchema = z.string().regex(/^[\da-f]{24}$/i, "Invalid category ID.");

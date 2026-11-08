@@ -1,3 +1,4 @@
+// Module: Builds safe searchable, filterable, sortable, paginated database queries.
 const EXCLUDED_FILTERS = new Set([
     "search",
     "sort",
@@ -20,6 +21,7 @@ class ApiFeatures {
         this.meta = {};
     }
 
+    // Search only declared model fields and escape user input before building the regex.
     search(searchFields = []) {
         const keyword = this.queryString.search?.trim();
         const fields = searchFields.filter((field) => this.model.schema.path(field));
@@ -36,6 +38,7 @@ class ApiFeatures {
         return this;
     }
 
+    // Ignore control operators and fields that are not part of the Mongoose schema.
     filter() {
         const filters = {};
 
@@ -59,6 +62,7 @@ class ApiFeatures {
         return this;
     }
 
+    // Sort on schema fields only; fall back to the configured default if none are valid.
     sort(defaultSort = "-createdAt") {
         const requestedSort = this.queryString.sort || defaultSort;
         const sortObject = {};
@@ -103,6 +107,7 @@ class ApiFeatures {
         return this;
     }
 
+    // Apply bounded page/skip/limit values to prevent unbounded list responses.
     loadMore(defaultLimit = 10) {
         const parsedLimit = Number(this.queryString.limit);
         const limit = Number.isInteger(parsedLimit) && parsedLimit > 0

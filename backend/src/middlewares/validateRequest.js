@@ -1,3 +1,4 @@
+// Module: Validates a request body or query and stores the parsed result for handlers.
 function validateRequest(schema, source = "body") {
     return function (req, res, next) {
         const result = schema.safeParse(req[source]);

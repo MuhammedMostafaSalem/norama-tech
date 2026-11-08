@@ -1,3 +1,4 @@
+// Module: Defines one editable content document per website page.
 const mongoose = require("mongoose");
 
 const websiteContentSchema = new mongoose.Schema(

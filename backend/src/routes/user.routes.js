@@ -1,3 +1,4 @@
+// Module: Mounts authenticated profile routes and admin-only user management routes.
 const express = require("express");
 const userController = require("../controllers/user.controller");
 const { authorizeRoles, isAuthenticatedUser } = require("../middlewares/auth");

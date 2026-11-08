@@ -1,3 +1,4 @@
+// Module: Serves uploaded assets from the backend uploads directory.
 const express = require("express");
 const path = require("path");
 

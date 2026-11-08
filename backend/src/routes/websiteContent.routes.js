@@ -1,3 +1,4 @@
+// Module: Mounts public published-page reads and admin content management routes.
 const express = require("express");
 const websiteContentController = require("../controllers/websiteContent.controller");
 const { authorizeRoles, isAuthenticatedUser } = require("../middlewares/auth");

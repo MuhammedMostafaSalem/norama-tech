@@ -1,3 +1,4 @@
+// Module: Mounts all API resource routers under the main API router.
 const express = require("express");
 const { StatusCodes } = require("http-status-codes");
 
@@ -6,6 +7,7 @@ const categoryRoutes = require("./category.routes");
 const messageRoutes = require("./message.routes");
 const projectRoutes = require("./project.routes");
 const reviewRoutes = require("./review.routes");
+const settingsRoutes = require("./settings.routes");
 const userRoutes = require("./user.routes");
 const websiteContentRoutes = require("./websiteContent.routes");
 
@@ -16,6 +18,7 @@ router.use("/categories", categoryRoutes);
 router.use("/messages", messageRoutes);
 router.use("/projects", projectRoutes);
 router.use("/reviews", reviewRoutes);
+router.use("/settings", settingsRoutes);
 router.use("/users", userRoutes);
 router.use("/content", websiteContentRoutes);
 

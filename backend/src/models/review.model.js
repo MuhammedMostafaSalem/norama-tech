@@ -1,3 +1,4 @@
+// Module: Defines review data and enforces one review per user and project.
 const mongoose = require("mongoose");
 
 const reviewSchema = new mongoose.Schema(

@@ -1,3 +1,4 @@
+// Module: Signs, verifies, rotates, hashes, and revokes refresh tokens.
 const { createHash, randomUUID } = require("node:crypto");
 const jwt = require("jsonwebtoken");
 const ms = require("ms");
@@ -6,10 +7,12 @@ const env = require("../config/env");
 const User = require("../models/user.model");
 const ApiError = require("../utils/ApiError");
 
+// Store only a one-way digest so a database leak does not reveal usable refresh tokens.
 function hashRefreshToken(token) {
     return createHash("sha256").update(token).digest("hex");
 }
 
+// Sign refresh tokens with their dedicated secret and a unique ID for each session rotation.
 function createRefreshToken(userId) {
     return jwt.sign(
         { id: String(userId), tokenType: "refresh", jti: randomUUID() },
@@ -18,6 +21,7 @@ function createRefreshToken(userId) {
     );
 }
 
+// Verify the signature and reject tokens that are not refresh-session tokens.
 function verifyRefreshToken(token) {
     const payload = jwt.verify(token, env.jwtRefreshSecret);
 
@@ -28,6 +32,7 @@ function verifyRefreshToken(token) {
     return payload;
 }
 
+// Atomically replace a stored refresh-token hash so a token can be used only once.
 async function rotateRefreshToken(token) {
     const payload = verifyRefreshToken(token);
     const currentHash = hashRefreshToken(token);
@@ -55,6 +60,7 @@ async function rotateRefreshToken(token) {
     return { user, refreshToken: nextRefreshToken };
 }
 
+// Remove a refresh session by matching its stored digest.
 async function revokeRefreshToken(token) {
     if (!token) {
         return;

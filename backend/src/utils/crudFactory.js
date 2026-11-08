@@ -1,3 +1,4 @@
+// Module: Creates reusable handlers for standard model CRUD operations.
 const { StatusCodes } = require("http-status-codes");
 const catchAsync = require("../middlewares/catchAsync");
 const ApiError = require("./ApiError");
@@ -11,6 +12,7 @@ function serialize(document, serializer) {
     return serializer ? serializer(document) : document;
 }
 
+// Create a document after validation and optional lifecycle hooks, then serialize the response.
 exports.createOne = (
     Model,
     {
@@ -49,6 +51,7 @@ exports.createOne = (
     });
 });
 
+// Build a searchable/filterable/paginated list and return its metadata.
 exports.getAll = (
     Model,
     {
@@ -86,6 +89,7 @@ exports.getAll = (
     });
 });
 
+// Find one record by ID or slug and optionally populate or serialize it.
 exports.getOne = (
     Model,
     { modelName = "document", populate = null, select = null, serializer = null } = {},
@@ -117,6 +121,7 @@ exports.getOne = (
     });
 });
 
+// Apply only allowed request fields and persist the updated record.
 exports.updateOne = (
     Model,
     {
@@ -169,6 +174,7 @@ exports.updateOne = (
     });
 });
 
+// Run delete guards/hooks around removing a record.
 exports.deleteOne = (
     Model,
     { modelName = "document", beforeDelete = null, afterDelete = null } = {},

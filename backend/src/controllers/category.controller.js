@@ -1,3 +1,4 @@
+// Module: Handles category CRUD and protects categories referenced by projects.
 const { StatusCodes } = require("http-status-codes");
 const Category = require("../models/category.model");
 const Project = require("../models/project.model");

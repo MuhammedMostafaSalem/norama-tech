@@ -1,3 +1,4 @@
+// Module: Stores contact submissions and provides admin message management.
 const Message = require("../models/message.model");
 const { createOne, deleteOne, getAll, getOne, updateOne } = require("../utils/crudFactory");
 const sendEmail = require("../utils/sendEmail");
@@ -5,6 +6,7 @@ const contactNotificationTemplate = require("../templates/contactNotificationTem
 
 const messageFields = "fullName email phone projectType subject message status notificationStatus createdAt updatedAt";
 
+// Save the contact submission first; email delivery failure is tracked without losing the message.
 exports.createMessage = createOne(Message, {
     modelName: "message",
     beforeCreate: ({ data }) => {

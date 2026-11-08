@@ -1,3 +1,4 @@
+// Module: Handles the signed-in user's profile and admin user management.
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/user.model");
 const ApiError = require("../utils/ApiError");
@@ -83,6 +84,7 @@ exports.authorizeOwnProfile = (req, res, next) => {
     next();
 };
 
+// Require the current password, then invalidate refresh sessions after changing credentials.
 exports.changePassword = catchAsync(async (req, res) => {
     const { currentPassword, newPassword } = req.validatedBody;
     const user = await User.findById(req.user._id).select("+password +refreshTokens");
