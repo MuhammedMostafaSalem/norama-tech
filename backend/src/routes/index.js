@@ -7,6 +7,7 @@ const messageRoutes = require("./message.routes");
 const projectRoutes = require("./project.routes");
 const reviewRoutes = require("./review.routes");
 const userRoutes = require("./user.routes");
+const websiteContentRoutes = require("./websiteContent.routes");
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.use("/messages", messageRoutes);
 router.use("/projects", projectRoutes);
 router.use("/reviews", reviewRoutes);
 router.use("/users", userRoutes);
+router.use("/content", websiteContentRoutes);
 
 router.get("/health", (req, res) => {
     res.status(StatusCodes.OK).json({ status: "ok" });
