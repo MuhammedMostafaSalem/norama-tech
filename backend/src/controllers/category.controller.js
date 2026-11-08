@@ -12,7 +12,11 @@ const {
 } = require("../utils/crudFactory");
 
 const categoryFields = "name slug description isActive createdAt updatedAt";
-const projectSummary = { path: "projects", select: "name slug status" };
+const projectSummary = {
+    path: "projects",
+    select: "name slug status",
+    match: { status: "published" },
+};
 
 exports.createCategory = createOne(Category, {
     modelName: "category",
