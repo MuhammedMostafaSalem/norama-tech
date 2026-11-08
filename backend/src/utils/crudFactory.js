@@ -13,15 +13,30 @@ function serialize(document, serializer) {
 
 exports.createOne = (
     Model,
-    { modelName = "document", beforeCreate = null, afterCreate = null, serializer = null } = {},
+    {
+        modelName = "document",
+        beforeCreate = null,
+        afterCreate = null,
+        onError = null,
+        serializer = null,
+    } = {},
 ) => catchAsync(async (req, res) => {
     const data = getRequestData(req);
+    let document;
 
-    if (beforeCreate) {
-        await beforeCreate({ req, Model, data });
+    try {
+        if (beforeCreate) {
+            await beforeCreate({ req, Model, data });
+        }
+
+        document = await Model.create(data);
+    } catch (error) {
+        if (onError) {
+            await onError({ req, Model, data, error });
+        }
+
+        throw error;
     }
-
-    const document = await Model.create(data);
 
     if (afterCreate) {
         await afterCreate({ req, document, Model });
@@ -110,6 +125,7 @@ exports.updateOne = (
         allowedFields = null,
         beforeUpdate = null,
         afterUpdate = null,
+        onError = null,
         serializer = null,
     } = {},
 ) => catchAsync(async (req, res) => {
@@ -122,17 +138,25 @@ exports.updateOne = (
     const data = getRequestData(req);
     const fields = allowedFields || Object.keys(data);
 
-    if (beforeUpdate) {
-        await beforeUpdate({ req, document, Model, data });
-    }
-
-    for (const field of fields) {
-        if (Object.hasOwn(data, field)) {
-            document.set(field, data[field]);
+    try {
+        if (beforeUpdate) {
+            await beforeUpdate({ req, document, Model, data });
         }
-    }
 
-    await document.save();
+        for (const field of fields) {
+            if (Object.hasOwn(data, field)) {
+                document.set(field, data[field]);
+            }
+        }
+
+        await document.save();
+    } catch (error) {
+        if (onError) {
+            await onError({ req, document, Model, data, error });
+        }
+
+        throw error;
+    }
 
     if (afterUpdate) {
         await afterUpdate({ req, document, Model });
